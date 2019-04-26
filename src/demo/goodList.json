@@ -1,0 +1,17 @@
+{
+	"state":"0",
+	"result":[
+        {
+         	"goodId":"001",
+            "goodImg":"1.jpg",
+            "goodPrice":"199",
+            "goodName":"水画"
+        },
+        {
+         	"goodId":"002",
+            "goodImg":"2.jpg",
+            "goodPrice":"299",
+            "goodName":"金桔"
+        }        
+	]
+}
