@@ -33,7 +33,7 @@
 
                   <li v-for = 'item in goodList'>
                     <div class="pic">
-                       <!--  <a href="#"><img :src="'/static/' + item.goodImg" alt=""></a>  -->
+                        <a href="#"><img v-lazy="'/static/' + item.goodImg" alt=""></a> 
                     </div>
                     <div class="main">
                       <div class="name">{{item.goodName}}</div>
@@ -82,16 +82,16 @@
                       endPrice:10000,
                     },                                        
                 ],
-                priceCheck:'all'
+                priceCheck:'all'        //价格过滤
             }
         },
         components:{
-          NavHeade,
-          NavBread,
-          NavFooter
+          NavHeade,//头部
+          NavBread,//面包屑
+          NavFooter//底部
         },
         mounted:function(){
-          this.getGoodList()
+          this.getGoodList()     //初始化数据
         },
         methods:{
           getGoodList(){
@@ -100,6 +100,7 @@
                   //console.log(this.goodList)
               })
           },
+          //价格导航
           setPriceFilter(index){
              this.priceCheck = index;
           }
