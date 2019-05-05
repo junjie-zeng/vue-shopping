@@ -14,7 +14,7 @@
 	<div id = 'app' style="padding: 20px;">
 		<h1>{{title}}</h1>
 		 <button type="button" class="btn btn-primary" @click = 'jsonp'>jsonp</button>
-		 <button type="button" class="btn btn-primary">post获取</button>
+		 <button type="button" class="btn btn-primary" @click = 'get'>get获取</button>
 	</div>
 	<script type="text/javascript">
 		new Vue({
@@ -25,6 +25,14 @@
 			methods:{
 				jsonp:function(){
                     this.$http.jsonp('https://wx.focussend.com/search/getCategory?type=209').then(function(res){
+                        this.title =  res;
+                    },function(err){
+                    	this.title =  err;
+                    })
+				},
+
+				get:function(){
+					this.$http.get('https://wx.focussend.com/search/getCategory?type=200').then(function(res){
                         this.title =  res;
                     },function(err){
                     	this.title =  err;
