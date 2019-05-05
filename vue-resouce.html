@@ -7,7 +7,8 @@
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	
 	<script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
-	<script type="text/javascript" src="node_modules/vue-resource/dist/vue-resource.min.js"></script>
+	<!-- <script type="text/javascript" src="node_modules/vue-resource/dist/vue-resource.min.js"></script> -->
+	<script src="https://cdn.bootcss.com/vue-resource/1.5.1/vue-resource.js"></script>
 </head>
 <body>
 	<div id = 'app' style="padding: 20px;">
@@ -23,7 +24,7 @@
 			},
 			methods:{
 				jsonp:function(){
-                    this.$http.jsonp('http://www.imooc.com/course/ajaxskillcourse?cid=796').then(function(res){
+                    this.$http.jsonp('https://wx.focussend.com/search/getCategory?type=209').then(function(res){
                         this.title =  res;
                     },function(err){
                     	this.title =  err;
