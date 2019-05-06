@@ -33,11 +33,11 @@
 
                   <li v-for = 'item in goodList'>
                     <div class="pic">
-                        <a href="#"><img v-lazy="'/static/' + item.goodImg" alt=""></a> 
+                        <a href="#"><img v-lazy="'/static/' + item.prodcutImg" alt=""></a> 
                     </div>
                     <div class="main">
-                      <div class="name">{{item.goodName}}</div>
-                      <div class="price">{{item.goodPrice}}</div>
+                      <div class="name">{{item.productName}}</div>
+                      <div class="price">{{item.prodcutPrice}}</div>
                       <div class="btn-area">
                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                       </div>
@@ -95,8 +95,11 @@
         },
         methods:{
           getGoodList(){
-              axios.get('/api/goodList').then((res)=>{
-                this.goodList = res.data.result;
+              //模拟数据
+              //axios.get('/api/goodList').then((res)=>{
+              //获取商品数据
+              axios.get('/goods').then((res)=>{
+                this.goodList = res.data.result.list;
                   //console.log(this.goodList)
               })
           },

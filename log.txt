@@ -23,7 +23,10 @@ vue购物车2
 	          原因分析：家中电脑能够完整的访问
 	                   公司电脑还未成功，可能未安装：cnpm i -g express-generator
 	                                              express --version
-
+    5.7号
+        1.代理设置 config-->index.js:proxyTable 设置默认代理是 http://localhost:3000
+        2.数据成功渲染出来了
+        3.商品列表分页和排序
 
 		    
 

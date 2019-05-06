@@ -2,16 +2,16 @@
 	"state":"0",
 	"result":[
         {
-         	"goodId":"001",
-            "goodImg":"1.jpg",
-            "goodPrice":"199",
-            "goodName":"水画"
+         	"productId":"001",
+            "prodcutImg":"1.jpg",
+            "prodcutPrice":"199",
+            "productName":"水画"
         },
         {
-         	"goodId":"002",
-            "goodImg":"2.jpg",
-            "goodPrice":"299",
-            "goodName":"金桔"
+         	"productId":"002",
+            "prodcutImg":"2.jpg",
+            "prodcutPrice":"299",
+            "productName":"金桔"
         }        
 	]
 }

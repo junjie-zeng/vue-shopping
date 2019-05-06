@@ -51,9 +51,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
     before(app){
      
-      app.get('/api/goodList',(req,res)=>{
+     /* app.get('/api/goodList',(req,res)=>{
         res.json(goodList)
-      })
+      })*/
      
     }
 
