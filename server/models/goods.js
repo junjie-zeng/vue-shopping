@@ -7,11 +7,13 @@ var produtSchema = new Schema({
 	"productId":{type:String},
 	"productName":String,
 	"prodcutPrice":Number,
-	"checked":String,
-	"productNum":Number,
 	"prodcutImg":String
 })
 
 module.exports = mongoose.model('Good',produtSchema);
 
 //emd amd（es5规范） exprots(node规范)
+
+
+/*	"checked":String,
+	"productNum":Number,*/
