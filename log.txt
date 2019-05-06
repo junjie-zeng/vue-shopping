@@ -1,0 +1,25 @@
+vue购物车2
+    webpack.dev.conf.js配置模拟后台接口数据
+    node.js
+	webpack
+    component 组件复用
+	slot 站位
+	axios数据获取
+	v-for
+	vue-lazyload图片懒加载
+	----------------------------------------------------log-----------------------------------------
+	5.6号
+	连接数据库log
+	    1.express搭建server
+		2.安装ejs指定HTML输出
+		3.安装mongo数据库，创建数据库，shooping 插入goods数据
+		4.服务端server
+		     a.server--> 创建models 增加 goods
+			 b.server--> routes 增加goods.js   连接数据库
+			 c.server--> main.js 配置goods路径
+			 
+	    5.node www http://localhost:3000/goods 碰壁bug (HTTP Error 400. The request hostname is invalid.)
+		    
+
+
+	    
