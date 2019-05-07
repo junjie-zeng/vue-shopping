@@ -23,7 +23,17 @@ mongoose.connection.on("disconnected",function(){
 //获取goods数据
 router.get("/",function(req,res,next){
 	//res.send("hello,goods list");
-	Goods.find({},function(err,doc){
+      //分页操作
+      let page = parseInt(req.param("page"));          //页数
+      let pageSize = parseInt(req.param("pageSize"));  //数量
+      let sort = req.param("sort");                    //升降序
+      let skip = (page - 1) * pageSize;
+      let params = {};
+
+      let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
+      goodsModel.sort({"prodcutPrice":sort});
+      goodsModel.exec(function(err,doc){
+	//Goods.find({},function(err,doc){
        if(err){
        	    res.json({
        	   	   status:"1",

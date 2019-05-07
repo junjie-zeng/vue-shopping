@@ -20,13 +20,27 @@ vue购物车2
 			 
 	    5.node www http://localhost:3000/goods 碰壁bug (HTTP Error 400. The request hostname is invalid.)
 
-	          原因分析：家中电脑能够完整的访问
-	                   公司电脑还未成功，可能未安装：cnpm i -g express-generator
+	          原因分析：1.家中电脑能够完整的访问
+	                   2.公司电脑还未成功，可能未安装：cnpm i -g express-generator
 	                                              express --version
+
+                       3.localhost:3000端口号可能被使用了，修改server的默认端口号为30001，能够成功访问
+
+
+
     5.7号
-        1.代理设置 config-->index.js:proxyTable 设置默认代理是 http://localhost:3000
+        1.proxyTable 代理设置 config-->index.js:proxyTable 设置默认代理是 http://localhost:3000（家中电脑）
         2.数据成功渲染出来了
         3.商品列表分页和排序
+        4.在mongo数据库中插入两个数据
+          db.goods.insert({"productId":"10002","productName":"瀑布","prodcutPrice":1000,"prodcutImg":"2.jpg"})  
+          db.goods.insert({"productId":"10003","productName":"iphone","prodcutPrice":3000,"prodcutImg":"3.jpg"})
+
+        5.在router-->goods中定义分页操作
+          http://localhost:3001/goods?page=1&pageSize=3&sort=1
+        
+
+
 
 		    
 
