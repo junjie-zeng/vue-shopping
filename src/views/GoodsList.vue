@@ -10,8 +10,8 @@
           <div class="filter-nav">
             <span class="sortby">Sort by:</span>
             <a href="javascript:void(0)" class="default cur">Default</a>
-            <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
-            <a href="javascript:void(0)" class="filterby stopPop">Filter by</a>
+            <a href="javascript:void(0)" class="price" @click = 'sortGoods'>Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            <a href="javascript:void(0)" class="filterby stopPop" >Filter by</a>
           </div>
           <div class="accessory-result">
             <!-- filter -->
@@ -25,7 +25,7 @@
                
               </dl>
             </div>
-
+            
             <!-- search result accessories list -->
             <div class="accessory-list-wrap">
               <div class="accessory-list col-4">
@@ -43,9 +43,10 @@
                       </div>
                     </div>
                   </li>
-                  
-                 
                 </ul>
+                 <div class="view-more-normal" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                    加载中...
+                  </div>
               </div>
             </div>
           </div>
@@ -82,7 +83,11 @@
                       endPrice:10000,
                     },                                        
                 ],
-                priceCheck:'all'        //价格过滤
+                priceCheck:'all',        //价格过滤
+                sortFlag:true,           //是否排序
+                page:1,                  //页码
+                pageSize:2,              //两条
+                busy:true,               //是否启用分页
             }
         },
         components:{
@@ -94,18 +99,52 @@
           this.getGoodList()     //初始化数据
         },
         methods:{
-          getGoodList(){
+          getGoodList(flag){
+              //参数
+              var param  = {
+                page:this.page,              //   页码
+                pageSize:this.pageSize,      //   条数
+                sort:this.sortFlag ? 1:-1,   //是否排序
+              };
               //模拟数据
               //axios.get('/api/goodList').then((res)=>{
               //获取商品数据
-              axios.get('/goods').then((res)=>{
-                this.goodList = res.data.result.list;
+              axios.get('/goods',{
+                params:param
+              }).then((res)=>{
+                //为true的话说明是调用分页
+                if(flag){
+                  this.goodList = this.goodList.concat(res.data.result.list); //通过concat与数据进行连接返回一个新的数据
+                  if(res.data.result.count == 0){ //等于0说明没有数据，则禁止分页
+                    this.busy = true;
+                  }else{
+                    this.busy = false;
+                  } 
+                }else{
+                  this.goodList = res.data.result.list;
+                  this.busy = false;
                   //console.log(this.goodList)
+                }
+                
               })
           },
           //价格导航
           setPriceFilter(index){
              this.priceCheck = index;
+          },
+          //升序降序
+          sortGoods(){
+              this.sortFlag = !this.sortFlag;
+              this.page =1;
+              this.getGoodList();
+          },
+          //分页
+          loadMore(){
+              this.busy = true,
+              setTimeout(()=>{
+                this.page ++,                   //增加页码
+                this.getGoodList(true)          //调用获取商品函数
+              },500)
           }
         }
     }

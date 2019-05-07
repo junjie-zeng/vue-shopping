@@ -38,6 +38,12 @@ vue购物车2
 
         5.在router-->goods中定义分页操作
           http://localhost:3001/goods?page=1&pageSize=3&sort=1
+
+
+    5.8号
+        1.功能：升序 降序
+        vue-infinite-scroll分页插件
+        src-->main.js定义使用插件 Vue.use(infinite_scorll)
         
 
 
