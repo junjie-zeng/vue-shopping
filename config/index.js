@@ -13,7 +13,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         "/goods":{        //代理设置
-            target:"http://localhost:3001"
+            target:"http://localhost:3002"
         }
     },
 

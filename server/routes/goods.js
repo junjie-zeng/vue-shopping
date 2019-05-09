@@ -28,10 +28,40 @@ router.get("/",function(req,res,next){
       let pageSize = parseInt(req.param("pageSize"));  //数量
       let sort = req.param("sort");                    //升降序
       let skip = (page - 1) * pageSize;
+      let priceLevel = req.param("priceLevel");        //价格水平
+      var priceGt = '',priceLte = '';                  //价格最高与最低
       let params = {};
+      //判断价格水平
+      if(priceLevel !='all'){
+         switch(priceLevel){ //根据传递过来的下标为最高与最低赋值
+            case'0':
+                  priceGt = "0";                        //0--100
+                  priceLte = "100";
+                  break;
+            case'1':
+                  priceGt = "100";                      //100--500
+                  priceLte = "500";
+                  break;                  
+            case'2':
+                  priceGt = "500";                      //500--1000
+                  priceLte = "1000";
+                  break;                  
+            case'3':
+                  priceGt = "1000";                     //1000--10000
+                  priceLte = "10000";
+                  break;                  
+         }
+         //往数据库传递价格的平均值
+         params = {
+            prodcutPrice:{
+                  $gt:priceGt,                         //最低
+                  $lte:priceLte                        //最高
+            }
+         }
+      }
 
       let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
-      goodsModel.sort({"prodcutPrice":sort});
+      goodsModel.sort({"prodcutPrice":sort});         //排序
       goodsModel.exec(function(err,doc){
 	//Goods.find({},function(err,doc){
        if(err){

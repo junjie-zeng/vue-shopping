@@ -22,11 +22,11 @@ vue购物车2
 
 	          原因分析：1.家中电脑能够完整的访问
 	                   2.公司电脑还未成功，可能未安装：cnpm i -g express-generator
-	                                              express --version
+	                                       查看版本：express --version
 
-                       3.localhost:3000端口号可能被使用了，修改server的默认端口号为30001，能够成功访问
-
-
+                       3.localhost:3000端口号可能被使用了，
+                         a.修改server www文件的默认端口号为30001，能够成功访问
+                         b.config index.js文件 代理的端口号也要修改 
 
     5.7号
         1.proxyTable 代理设置 config-->index.js:proxyTable 设置默认代理是 http://localhost:3000（家中电脑）
@@ -44,6 +44,13 @@ vue购物车2
         1.功能：升序 降序
         vue-infinite-scroll分页插件
         src-->main.js定义使用插件 Vue.use(infinite_scorll)
+
+    5.9号
+        1.公司端口被其他服务给占用，修改了端口号:3002   server/bin/www  config/index.js
+        2.价格过滤功能实现
+        3.分页loading图片
+
+
         
 
 

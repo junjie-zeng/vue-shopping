@@ -33,7 +33,7 @@
 
                   <li v-for = 'item in goodList'>
                     <div class="pic">
-                        <a href="#"><img v-lazy="'/static/' + item.prodcutImg" alt=""></a> 
+                       <!--  <a href="#"><img v-lazy="'/static/' + item.prodcutImg" alt=""></a>  -->
                     </div>
                     <div class="main">
                       <div class="name">{{item.productName}}</div>
@@ -44,9 +44,9 @@
                     </div>
                   </li>
                 </ul>
-                 <div class="view-more-normal" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-                    加载中...
-                  </div>
+                <div class="view-more-normal" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                    <img src="./../assets/loading-spinning-bubbles.svg" v-show = 'loading'>
+                </div>
               </div>
             </div>
           </div>
@@ -64,8 +64,14 @@
     export default{
         data(){
             return {
-                goodList:[],            //所有数据
-                priceFilter:[           //价格过滤
+                goodList:[],             //所有数据
+                loading:false,           //是否显示加载中 默认不显示当调用接口是显示，接口返回后隐藏
+                priceCheck:'all',        //价格过滤
+                sortFlag:true,           //是否排序
+                page:1,                  //页码
+                pageSize:2,              //两条
+                busy:true,               //是否启用分页                
+                priceFilter:[            //价格过滤
                     {
                       startPrice:0,
                       endPrice:100,
@@ -83,11 +89,7 @@
                       endPrice:10000,
                     },                                        
                 ],
-                priceCheck:'all',        //价格过滤
-                sortFlag:true,           //是否排序
-                page:1,                  //页码
-                pageSize:2,              //两条
-                busy:true,               //是否启用分页
+                
             }
         },
         components:{
@@ -100,11 +102,13 @@
         },
         methods:{
           getGoodList(flag){
+              this.loading = true;           //调用接口显示加载中
               //参数
               var param  = {
                 page:this.page,              //   页码
                 pageSize:this.pageSize,      //   条数
                 sort:this.sortFlag ? 1:-1,   //是否排序
+                priceLevel:this.priceCheck,  //价格平均值
               };
               //模拟数据
               //axios.get('/api/goodList').then((res)=>{
@@ -112,6 +116,7 @@
               axios.get('/goods',{
                 params:param
               }).then((res)=>{
+                 this.loading = false;           //接口返回数据后隐藏加载中
                 //为true的话说明是调用分页
                 if(flag){
                   this.goodList = this.goodList.concat(res.data.result.list); //通过concat与数据进行连接返回一个新的数据
@@ -131,12 +136,14 @@
           //价格导航
           setPriceFilter(index){
              this.priceCheck = index;
+             this.page = 1;
+             this.getGoodList();                //调用获取商品函数
           },
           //升序降序
           sortGoods(){
               this.sortFlag = !this.sortFlag;
               this.page =1;
-              this.getGoodList();
+              this.getGoodList();               //调用获取商品函数
           },
           //分页
           loadMore(){
