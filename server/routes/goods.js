@@ -1,7 +1,8 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
-var Goods = require("../models/goods");
+var Goods = require("../models/goods");//商品列表模型
+
 
 var url = 'mongodb://127.0.0.1:27017/shopping';
 
@@ -35,21 +36,21 @@ router.get("/",function(req,res,next){
       if(priceLevel !='all'){
          switch(priceLevel){ //根据传递过来的下标为最高与最低赋值
             case'0':
-                  priceGt = "0";                        //0--100
-                  priceLte = "100";
+                  priceGt = 0;                        //0--100
+                  priceLte = 100;
                   break;
             case'1':
-                  priceGt = "100";                      //100--500
-                  priceLte = "500";
-                  break;                  
+                  priceGt = 100;                      //100--500
+                  priceLte = 500;
+                  break;             
             case'2':
-                  priceGt = "500";                      //500--1000
-                  priceLte = "1000";
+                  priceGt = 500;                      //500--1000
+                  priceLte = 1000;
                   break;                  
             case'3':
-                  priceGt = "1000";                     //1000--10000
-                  priceLte = "10000";
-                  break;                  
+                  priceGt = 1000;                     //1000--10000
+                  priceLte = 10000;
+                  break;               
          }
          //往数据库传递价格的平均值
          params = {
@@ -59,6 +60,8 @@ router.get("/",function(req,res,next){
             }
          }
       }
+
+      
 
       let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
       goodsModel.sort({"prodcutPrice":sort});         //排序
@@ -75,11 +78,101 @@ router.get("/",function(req,res,next){
             	msg:'',
             	result:{
             		count:doc.length,
-            		list:doc
+            		list:doc,
+                        test:{"测试":err}
             	}
             })
        }
 	})
 });
+
+//加入购物车
+router.post("/addCart",function(req,res,next){
+      var userId = '100000077';
+      var productId = req.body.productId;
+      console.log(productId);
+      var User = require("../models/users");//加入购物车
+      User.findOne({userId:userId},function(err,userDoc){
+          if(err){
+               res.json({
+                  status:"1",
+                  msg:err.message
+               })
+          }else{
+           // console.log("userDoc" + userDoc);
+            if(userDoc){
+                  let goodsItem = '';
+                  //判断商品是否已经添加到购物车了，如果商品id相同说明已有该商品，则让商品数量加加
+                  userDoc.cartList.forEach(function(item){
+                      if(item.productId == productId){//id相同说明已有该商品
+                         goodsItem = item;            //将商品信息存储起来
+                         item.productNum ++;
+                      }
+                  })
+                  //goodsItem 有值说明已经添加过购物车了，同时重新save让商品数量保存进去
+                  if(goodsItem){
+                        userDoc.save(function(err3,doc3){
+                             if(err3){
+                                  res.json({
+                                    status:"1",
+                                    msg:err3.message
+                                 })
+                              }else{
+                                    res.json({
+                                          status:'0',
+                                          msg:'',
+                                          result:'成功'
+                                    })
+                              }
+                         })
+
+                  }else{
+
+                         Goods.findOne({productId:productId},function(err2,doc2){   //查询商品表中的数据
+                             if(err2){
+                                  res.json({
+                                    status:"1",
+                                    msg:err2.message
+                                 })
+                              }else{
+                                 if(doc2){
+                                     doc2['productNum'] = 1;
+                                     doc2['checked'] = 1;
+                                     userDoc.cartList.push(doc2);                  //将doc2返回过来的那一条数据添加至购物车
+                                     console.log("---------------------------------------");
+                                     console.log("doc2" + doc2);
+                                     console.log("---------------------------------------");
+                                     console.log("长度---"+ userDoc.cartList.length +"---userDoc.cartList--" + userDoc.cartList);
+                                     console.log("---------------------------------------");
+                                     userDoc.save(function(err3,doc3){
+                                         if(err3){
+                                              res.json({
+                                                status:"1",
+                                                msg:err3.message
+                                             })
+                                          }else{
+                                                res.json({
+                                                      status:'0',
+                                                      msg:'',
+                                                      result:'成功'
+                                                })
+                                          }
+                                     })
+                                 }
+                             }
+                        })
+
+                  }
+
+
+
+
+
+                 
+            }
+          }
+      })
+})
+
 
 module.exports = router;

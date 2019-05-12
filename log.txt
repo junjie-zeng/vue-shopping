@@ -35,6 +35,14 @@ vue购物车2
         4.在mongo数据库中插入两个数据
           db.goods.insert({"productId":"10002","productName":"瀑布","prodcutPrice":1000,"prodcutImg":"2.jpg"})  
           db.goods.insert({"productId":"10003","productName":"iphone","prodcutPrice":3000,"prodcutImg":"3.jpg"})
+          db.goods.insert({"productId":"10004","productName":"画布","prodcutPrice":100,"prodcutImg":"4.jpg"})
+          db.goods.insert({"productId":"10005","productName":"iphone7","prodcutPrice":500,"prodcutImg":"5.jpg"})
+
+          db.goods.insert({"productId":"10006","productName":"iphoneX","prodcutPrice":2000,"prodcutImg":"6.jpg"})
+
+          db.users.insert({"userId":"100000077","userName":"admin","userPwd":"123456","orderList":[{"orderId":"6224201705302250301","orderTotal":3359,"addressInfo":{"addressId":"100001","userName":"JackBean","streetName":"北京市朝阳区朝阳公园","postCode":100001,"tel":12345678901.0,"isDefault":true},"goodsList":[{"productImage":"mi6.jpg","salePrice":"2499","productName":"小米6","productId":"201710006","_id":{"$oid":"58c284f4117a2e6599abef60"},"productNum":"1","checked":"1"}],"orderStatus":"1","createDate":"2017-05-30 22:50:30"}],"cartList":[{"prodcutImg":"1.jpg","prodcutPrice":"129","productName":"小钢炮蓝牙音箱","productId":"201710017","_id":{"$oid":"58e7058498dab115d336b3fc"},"productNum":"6","checked":"0"}],"addressList":[{"addressId":"100001","userName":"JackBean","streetName":"北京市朝阳区朝阳公园","postCode":"100001","tel":"12345678901","isDefault":true}]})
+
+          db.users.insert({"userId":"100000077","userName":"admin","userPwd":"123456","orderList":[{"orderId":"6224201705302250301","orderTotal":3359,"addressInfo":{"addressId":"100001","userName":"JackBean","streetName":"北京市朝阳区朝阳公园","postCode":100001,"tel":12345678901.0,"isDefault":true},"goodsList":[{"productImage":"mi6.jpg","salePrice":"2499","productName":"小米6","productId":"201710006","_id":{"$oid":"58c284f4117a2e6599abef60"},"productNum":"1","checked":"1"}],"orderStatus":"1","createDate":"2017-05-30 22:50:30"}],"cartList":[],"addressList":[{"addressId":"100001","userName":"JackBean","streetName":"北京市朝阳区朝阳公园","postCode":"100001","tel":"12345678901","isDefault":true}]})
 
         5.在router-->goods中定义分页操作
           http://localhost:3001/goods?page=1&pageSize=3&sort=1
@@ -49,6 +57,20 @@ vue购物车2
         1.公司端口被其他服务给占用，修改了端口号:3002   server/bin/www  config/index.js
         2.价格过滤功能实现
         3.分页loading图片
+
+
+    5.11号
+        1.重装MongoDB
+        2.配置MongoDB
+            找到MongoDB bin目录下（D:\AidToLearning\mongo\MongoDB\bin>） --dbpath D:\AidToLearning\mongo\MongoLog\data
+            失败： 配置log输出 （D:\AidToLearning\mongo\MongoDB\bin>）          --config D:\AidToLearning\mongo\Mongoog\etc\mongo.conf
+            成功：D:\AidToLearning\mongo\MongoDB\bin>mongod --logpath D:\AidToLearning\mongo\MongLog\logs\mongodb.log
+
+    5.12号
+        1.加入购物车
+        2.bug
+             1.往购物车中增加两个属性，未添加成功
+             2.往数据库中save时没有将cartList中的初始数据清空，导致一直插入数据失败
 
 
         

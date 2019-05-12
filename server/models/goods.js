@@ -10,7 +10,7 @@ var produtSchema = new Schema({
 	"prodcutImg":String
 })
 
-module.exports = mongoose.model('Good',produtSchema);
+module.exports = mongoose.model('Good',produtSchema);    //第三个参数用于关联集合数据库里面的名字 eg:module.exports = mongoose.model('Good',produtSchema,"goods");  
 
 //emd amd（es5规范） exprots(node规范)
 
