@@ -88,20 +88,20 @@ router.get("/",function(req,res,next){
 
 //加入购物车
 router.post("/addCart",function(req,res,next){
-      var userId = '100000077';
-      var productId = req.body.productId;
-      console.log(productId);
-      var User = require("../models/users");//加入购物车
-      User.findOne({userId:userId},function(err,userDoc){
+      var userId = '100000077';                    //用户id
+      var productId = req.body.productId;          //前端传递过来的额商品id
+      //console.log(productId);
+      var User = require("../models/users");       //用户models
+      User.findOne({userId:userId},function(err,userDoc){ //根据用户id查找用户的一系列东西，userDoc为整个对象
           if(err){
                res.json({
                   status:"1",
                   msg:err.message
                })
           }else{
-           // console.log("userDoc" + userDoc);
+            console.log("userDoc" + userDoc);
             if(userDoc){
-                  let goodsItem = '';
+                  let goodsItem = '';                     //用于保存商品信息
                   //判断商品是否已经添加到购物车了，如果商品id相同说明已有该商品，则让商品数量加加
                   userDoc.cartList.forEach(function(item){
                       if(item.productId == productId){//id相同说明已有该商品
@@ -139,11 +139,11 @@ router.post("/addCart",function(req,res,next){
                                      doc2.productNum = 1;
                                      doc2.checked = 1;
                                      userDoc.cartList.push(doc2);                  //将doc2返回过来的那一条数据添加至购物车
-                                     console.log("---------------------------------------");
-                                     console.log("doc2" + doc2);
-                                     console.log("---------------------------------------");
-                                     console.log("长度---"+ userDoc.cartList.length +"---userDoc.cartList--" + userDoc.cartList);
-                                     console.log("---------------------------------------");
+                                    // console.log("---------------------------------------");
+                                    // console.log("doc2" + doc2);
+                                    // console.log("---------------------------------------");
+                                    // console.log("长度---"+ userDoc.cartList.length +"---userDoc.cartList--" + userDoc.cartList);
+                                    // console.log("---------------------------------------");
                                      userDoc.save(function(err3,doc3){
                                          if(err3){
                                               res.json({

@@ -14,7 +14,13 @@ module.exports = {
     proxyTable: {
         "/goods":{        //代理设置
             target:"http://localhost:3002"
-        }
+        },
+        "/goods/*":{        //代理设置
+            target:"http://localhost:3002"
+        },
+        "/users/*":{        //代理设置
+            target:"http://localhost:3002"
+        }         
     },
 
     // Various Dev Server settings
