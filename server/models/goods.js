@@ -7,7 +7,9 @@ var produtSchema = new Schema({
 	"productId":{type:String},
 	"productName":String,
 	"prodcutPrice":Number,
-	"prodcutImg":String
+	"prodcutImg":String,
+	"checked":String,
+	"productNum":Number
 })
 
 module.exports = mongoose.model('Good',produtSchema);    //第三个参数用于关联集合数据库里面的名字 eg:module.exports = mongoose.model('Good',produtSchema,"goods");  

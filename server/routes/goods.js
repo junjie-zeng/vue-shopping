@@ -136,8 +136,8 @@ router.post("/addCart",function(req,res,next){
                                  })
                               }else{
                                  if(doc2){
-                                     doc2['productNum'] = 1;
-                                     doc2['checked'] = 1;
+                                     doc2.productNum = 1;
+                                     doc2.checked = 1;
                                      userDoc.cartList.push(doc2);                  //将doc2返回过来的那一条数据添加至购物车
                                      console.log("---------------------------------------");
                                      console.log("doc2" + doc2);

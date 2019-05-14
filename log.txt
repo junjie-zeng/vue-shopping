@@ -70,6 +70,7 @@ vue购物车2
         1.加入购物车
         2.bug
              1.往购物车中增加两个属性，未添加成功
+                原因是因为goods models中没有加入productNum checked两个属性，导致server中入不了
              2.往数据库中save时没有将cartList中的初始数据清空，导致一直插入数据失败
 
 
