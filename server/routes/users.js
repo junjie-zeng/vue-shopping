@@ -7,7 +7,7 @@ var Users = require('./../models/users')
 router.get('/', function(req, res, next) {   ///users 默认一级路由
   res.send('respond with a resource');
 });
-
+//用户登入
 router.post('/login',function(req,res,next){
 	var param = {
 		userName:req.body.userName,
@@ -25,7 +25,8 @@ router.post('/login',function(req,res,next){
             })
         }else{
         	if(doc){
-        		res.cookie("userId",doc.userId,{
+        		//存放cookie 时间一小时
+        		res.cookie("userId",doc.userId,{  
         			path:'/',
         			maxAge:1000*60*60
         		});
@@ -38,7 +39,7 @@ router.post('/login',function(req,res,next){
         			status:"0",
         			msg:'',
         			result:{
-        				userName:doc.userName
+        				userName:doc.userName   //返回用户名
         			}
         		})
 
@@ -47,6 +48,42 @@ router.post('/login',function(req,res,next){
         }
 	})
 })
+
+//用户登出
+router.post("/logout",function(req,res,next){
+    res.cookie("userId","",{
+        path:"/",
+        maxAge:-1
+    });
+    res.json({
+        status:"0",
+        msg:"",
+        result:"登出成功"
+    })
+})
+
+//是否登入
+router.get("/checkLogin",function(req,res,next){
+
+    console.log('------------------------------------------')
+    console.log('req.cookies.userId' + req.cookies.userId)
+    console.log('------------------------------------------')
+    //查找cookie中是否有userId，如果有userId则返回userName
+    if(req.cookies.userId){
+        res.json({
+            status:"0",
+            msg:"",
+            result:req.cookies.userName || ""
+        })
+    }else{
+        res.json({
+            status:"1",
+            msg:"未登入",
+            result:""
+        })
+    }
+})
+
 
 
 

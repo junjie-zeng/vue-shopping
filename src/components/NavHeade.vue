@@ -17,7 +17,7 @@
               <!--<a href="/" class="navbar-link">我的账户</a>-->
               <span class="navbar-link" v-text = "nickName"></span>
               <a href="javascript:void(0)" class="navbar-link" @click = "loginModal = true" v-if = "!nickName">Login</a> <!-- 等于''的时候显示 -->
-              <a href="javascript:void(0)" class="navbar-link" v-if = "nickName">Logout</a> <!-- 不等于''的时候显示 -->
+              <a href="javascript:void(0)" class="navbar-link" @click = "logOut" v-if = "nickName">Logout</a> <!-- 不等于''的时候显示 -->
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
                 <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -78,8 +78,23 @@
 
           }
         },
+        //初始化函数
+        mounted(){
+            this.checkLogin();
+        },
         methods:{
+            //调用判断是否已经登入接口，查找cookie中是否有userId，如果有userId则返回userName
+            checkLogin(){
+                axios.get("/users/checkLogin").then((response) =>{
+                    var res = response.data;
+                    if(res.status == "0"){
+                        this.nickName = res.result;
+                        console.log('this.nickName' + this.nickName)
+                    }
+                })
+            }, 
             login(){
+                //this.userName == "" || this.userPwd == "" || (this.errMsg = true,return)
                 //判断是否为空
                 if(!this.userName || !this.userPwd){
                     this.errMsg = true;
@@ -96,6 +111,15 @@
                         console.log('userName：' + res.result.userName)
                     }else{
                         this.errMsg = true;
+                    }
+                })
+            },
+            //登出
+            logOut(){
+                axios.post("/users/logout").then((response)=>{
+                    let res = response.data;
+                    if(res.status == "0"){
+                       this.nickName = "";
                     }
                 })
             }
