@@ -52,6 +52,12 @@
           </div>
         </div>
       </div>
+      <Modal :mdShow ="mdShow" v-on:close = "closeModal">
+            <p slot="message">请先登入，否则无法加入购物车</p>
+            <div slot="btnGroup">
+              <a class="btn btn--m" href="javascript:;" @click = "closeModal">关闭</a>
+          </div>
+      </Modal>
       <!--  <div class="md-overlay" ></div> -->
       <nav-footer></nav-footer>
     </div>
@@ -60,6 +66,7 @@
     import NavHeade from './../components/NavHeade'
     import NavBread from '@/components/NavBread'
     import NavFooter from '@/components/NavFooter'
+    import Modal from '@/components/Modal'
     import axios from './../../node_modules/axios/dist/axios.js'
     export default{
         data(){
@@ -70,7 +77,8 @@
                 sortFlag:true,           //是否排序
                 page:1,                  //页码
                 pageSize:2,              //两条
-                busy:true,               //是否启用分页                
+                busy:true,               //是否启用分页 
+                mdShow:false,            //是否显示模态               
                 priceFilter:[            //价格过滤
                     {
                       startPrice:0,
@@ -95,7 +103,8 @@
         components:{
           NavHeade,//头部
           NavBread,//面包屑
-          NavFooter//底部
+          NavFooter,//底部
+          Modal,    //全局模态
         },
         mounted:function(){
           this.getGoodList()     //初始化数据
@@ -164,9 +173,13 @@
               if(res.data.status == "0"){       //状态等于0说明调用接口成功
                  alert(res.data.result)
               }else{
-                 alert("msg:" + res.data.msg)
+                // alert("msg:" + res.data.msg)
+                 this.mdShow = true;
               }
             })
+          },
+          closeModal(){
+            this.mdShow = false;
           }
         }
     }
