@@ -76,7 +76,10 @@ vue购物车2
 
     5.16号
         1.增加模态全局弹框（父子之间的通信：父组件可以传递属性到子组件，但是子组件不能随便改变这个状态）
-
+        2.Git取消代理
+             git config --global --unset http.proxy
+             git config --global --unset https.proxy
+            
 
         
 
