@@ -113,22 +113,26 @@
               //模拟数据
               //axios.get('/api/goodList').then((res)=>{
               //获取商品数据
-              axios.get('/goods',{
+              axios.get('/goods/list',{
                 params:param
               }).then((res)=>{
                  this.loading = false;           //接口返回数据后隐藏加载中
-                //为true的话说明是调用分页
-                if(flag){
-                  this.goodList = this.goodList.concat(res.data.result.list); //通过concat与数据进行连接返回一个新的数据
-                  if(res.data.result.count == 0){ //等于0说明没有数据，则禁止分页
-                    this.busy = true;
-                  }else{
-                    this.busy = false;
-                  } 
+                 if(res.data.status == "0"){     //=0说明请求接口成功返回了
+                    //为true的话说明是调用分页
+                    if(flag){
+                        this.goodList = this.goodList.concat(res.data.result.list); //通过concat与数据进行连接返回一个新的数据
+                      if(res.data.result.count == 0){ //等于0说明没有数据，则禁止分页
+                          this.busy = true;
+                      }else{
+                          this.busy = false;
+                      } 
+                    }else{
+                        this.goodList = res.data.result.list;
+                        this.busy = false;
+                        //console.log(this.goodList)
+                    }
                 }else{
-                  this.goodList = res.data.result.list;
-                  this.busy = false;
-                  //console.log(this.goodList)
+                     this.goodList = [];
                 }
                 
               })
@@ -153,11 +157,11 @@
                 this.getGoodList(true)          //调用获取商品函数
               },500)
           },
-          addCart(productId){                   //加入购物车
+          addCart(productId){                   //加入购物车，传入商品id
             axios.post("/goods/addCart",{
               productId:productId
             }).then((res)=>{
-              if(res.data.status == "0"){
+              if(res.data.status == "0"){       //状态等于0说明调用接口成功
                  alert(res.data.result)
               }else{
                  alert("msg:" + res.data.msg)

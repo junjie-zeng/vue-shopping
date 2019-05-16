@@ -22,7 +22,7 @@ mongoose.connection.on("disconnected",function(){
 });
 
 //获取goods数据
-router.get("/",function(req,res,next){
+router.get("/list",function(req,res,next){
 	//res.send("hello,goods list");
       //分页操作
       let page = parseInt(req.param("page"));          //页数

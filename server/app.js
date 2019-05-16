@@ -26,6 +26,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//未登入的拦截
+app.use(function(req,res,next){
+	//如果包含用户id 继续向下执行
+	if(req.cookies.userId){
+		next();
+	}else{
+		//console.log('req.originalUrl----:' + req.originalUrl)
+        //如果等于以下接口则继续执行，否则的话直接拦截
+		if(req.originalUrl == "/users/login" || req.originalUrl == "/users/logout" || req.originalUrl.indexOf("/goods/list") >-1){
+			next();
+		}else{
+			res.json({
+				status:"1",
+				msg:"当前未登录",
+				result:""
+			})
+		}
+	}
+})
+
 app.use('/', indexRouter);//默认
 app.use('/users', users);//用户
 app.use('/goods',goods);//商品
