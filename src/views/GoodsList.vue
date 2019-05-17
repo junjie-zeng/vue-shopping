@@ -52,11 +52,25 @@
           </div>
         </div>
       </div>
-      <Modal :mdShow ="mdShow" v-on:close = "closeModal">
+      <Modal :mdShow ="mdShow" @close = "closeModal">
             <p slot="message">请先登入，否则无法加入购物车</p>
-            <div slot="btnGroup">
+            <div slot = "btnGroup">
               <a class="btn btn--m" href="javascript:;" @click = "closeModal">关闭</a>
-          </div>
+            </div>
+      </Modal>
+
+      <Modal :mdShow = "mdShowCart" @close = "closeModal">
+           <p slot = "message">
+              <svg class="icon-status-ok">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+              </svg>
+              <span>加入购物车成功</span>
+           </p>
+           <div slot = "btnGroup">
+               <a class="btn btn--m" href="javascript:;" @click = "mdShowCart = false">继续购物</a>
+               <a class="btn btn--m" href="/#/cart">查看购物车</a>
+               <!-- <router-link class="btn btn--m btn--red" href="javascript:;">查看购物车</router-link> -->
+           </div>
       </Modal>
       <!--  <div class="md-overlay" ></div> -->
       <nav-footer></nav-footer>
@@ -78,7 +92,8 @@
                 page:1,                  //页码
                 pageSize:2,              //两条
                 busy:true,               //是否启用分页 
-                mdShow:false,            //是否显示模态               
+                mdShow:false,            //是否显示模态 
+                mdShowCart:false,         //是否显示加入购物车成功              
                 priceFilter:[            //价格过滤
                     {
                       startPrice:0,
@@ -171,7 +186,8 @@
               productId:productId
             }).then((res)=>{
               if(res.data.status == "0"){       //状态等于0说明调用接口成功
-                 alert(res.data.result)
+                 //alert(res.data.result)
+                 this.mdShowCart = true;
               }else{
                 // alert("msg:" + res.data.msg)
                  this.mdShow = true;
@@ -180,6 +196,7 @@
           },
           closeModal(){
             this.mdShow = false;
+            this.mdShowCart = false;
           }
         }
     }

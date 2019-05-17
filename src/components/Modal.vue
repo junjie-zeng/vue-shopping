@@ -10,7 +10,7 @@
               <div class="confirm-tips">
                   <slot name = "message"></slot>
               </div>
-              <div class="login-wrap">
+              <div class="btn-wrap">
                   <slot name = "btnGroup"></slot>
               </div>
             </div>
