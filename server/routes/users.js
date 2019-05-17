@@ -51,6 +51,7 @@ router.post('/login',function(req,res,next){
 
 //用户登出
 router.post("/logout",function(req,res,next){
+    //将userId清空（其实就是覆盖）
     res.cookie("userId","",{
         path:"/",
         maxAge:-1
@@ -64,7 +65,6 @@ router.post("/logout",function(req,res,next){
 
 //是否登入
 router.get("/checkLogin",function(req,res,next){
-
     console.log('------------------------------------------')
     console.log('req.cookies.userId' + req.cookies.userId)
     console.log('------------------------------------------')
@@ -85,7 +85,30 @@ router.get("/checkLogin",function(req,res,next){
 })
 
 
+//我的购物车
+router.get("/cart",function(req,res,next){
+    //获取用户id
+    var userId = req.cookies.userId;
+    //根据用户查询当前用户的购物车
+    Users.findOne({userId},function(err,doc){
+        if(err){//错误返回
+            res.json({
+                status:'1',
+                msg:err.message,
+                result
+            })
+        }else{//成功返回
+            if(doc){
+                res.json({
+                    status:'0',
+                    msg:"",
+                    result:doc.cartList      //购物车数据
+                })
+            }
+        }
 
+    })
+})
 
 
 module.exports = router;

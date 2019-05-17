@@ -79,6 +79,10 @@ vue购物车2
         2.Git取消代理
              git config --global --unset http.proxy
              git config --global --unset https.proxy
+
+    5.17
+        1.增加获取购物车接口
+        2.获取购物车数据进行渲染
             
 
         

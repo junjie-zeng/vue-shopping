@@ -61,8 +61,7 @@ router.get("/list",function(req,res,next){
          }
       }
 
-      
-
+    
       let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
       goodsModel.sort({"prodcutPrice":sort});         //排序
       goodsModel.exec(function(err,doc){
@@ -163,12 +162,7 @@ router.post("/addCart",function(req,res,next){
                         })
 
                   }
-
-
-
-
-
-                 
+                  
             }
           }
       })
