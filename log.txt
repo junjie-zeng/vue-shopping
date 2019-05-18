@@ -87,6 +87,9 @@ vue购物车2
     5.18
         post请求通过 req.body获取参数
         get请求通过  req.param获取参数
+        computed 实时计算
+        1.商品数量编辑，是否选中，是否全选，总金额
+        2.定义全局过滤器对总金额进行过滤，在main.js中定义全局过滤器filters
         
 
 
