@@ -109,8 +109,8 @@
           <div class="cart-foot-inner">
             <div class="cart-foot-l">
               <div class="item-all-check">
-                <a href="javascipt:;">
-                  <span class="checkbox-btn item-check-btn">
+                <a href="javascipt:;"  @click = "toggleCheckCartAll">
+                  <span class="checkbox-btn item-check-btn" :class = "{'check':checkAllFlag}">
                       <svg class="icon icon-ok"><use xlink:href="#icon-ok"/></svg>
                   </span>
                   <span>Select all</span>
@@ -119,7 +119,7 @@
             </div>
             <div class="cart-foot-r">
               <div class="item-total">
-                Item total: <span class="total-price">500</span>
+                Item total: <span class="total-price">{{totalPrice}}</span>
               </div>
               <div class="btn-wrap">
                <!--  <router-link :to = "{name:'Address'}">Checkout</router-link> -->
@@ -187,6 +187,29 @@
         mounted(){
             this.cartInit();       //初始化购物车数据
         },
+        //实时计算
+        computed:{   
+             checkAllFlag(){     //全选
+                 return this.countCartCheck == this.cartList.length;
+             },
+             countCartCheck(){   //计算有多少商品被选中
+                 var i = 0;
+                 this.cartList.forEach((item) =>{
+                      if(item.checked == '1') i++;   //如果商品check等于1才进行i++
+                 })
+                 return i;
+             },
+             totalPrice(){                              //总金额 
+                var total = 0;
+                this.cartList.forEach((item)=>{
+                    if(item.checked == '1'){
+                       total += item.productNum * item.prodcutPrice
+                    }
+                })
+                return total;
+             }
+
+        },
         methods:{
             //加载购物车数据
             cartInit(){
@@ -245,6 +268,21 @@
                   ).then((res) =>{
                       if(res.data.status == "0"){
                          console.log(res.data.result)
+                      }
+                  })
+            },
+            //全选商品
+            toggleCheckCartAll(){
+                var flag = this.checkAllFlag; //根据实时计算得到true或false
+                this.cartList.forEach((item) =>{ //遍历商品并通过flag传递过来的参数进行赋值
+                    item.checked = flag ? "0":"1";
+                })
+                //调用商品全选与反选接口
+                axios.post("/users/editCheckAll",
+                  {'checkAll':flag}
+                  ).then((res)=>{
+                      if(res.data.status == "0"){
+                          console.log(res.data.result)
                       }
                   })
             },

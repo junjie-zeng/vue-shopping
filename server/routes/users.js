@@ -183,5 +183,42 @@ router.post('/editCart',function(req,res,next){
     })
 })
 
+//商品全选与反选设置
+router.post('/editCheckAll',function(req,res,next){
+    var userId = req.cookies.userId,
+        checkAll = req.body.checkAllFlag ? "1" : "0";
+
+    Users.findOne({userId:userId},function(err,userDoc){
+        if(err){
+            res.json({
+                status:'1',
+                msg:err.message,
+                result:''
+            })
+        }else{
+            if(userDoc){
+                userDoc.cartList.forEach((item)=>{
+                    item.checked = checkAll;
+                });
+                userDoc.save(function(err1,doc1){
+                    if(err1){
+                        res.json({
+                            status:'1',
+                            msg:err.message,
+                            result:''
+                        })
+                    }else{
+                        res.json({
+                            status:'0',
+                            msg:'成功',
+                            result:'success'
+                        })
+
+                    }
+                })
+            }
+        }
+    })
+})
 
 module.exports = router;
