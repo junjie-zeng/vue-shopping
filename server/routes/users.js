@@ -186,7 +186,7 @@ router.post('/editCart',function(req,res,next){
 //商品全选与反选设置
 router.post('/editCheckAll',function(req,res,next){
     var userId = req.cookies.userId,
-        checkAll = req.body.checkAllFlag ? "1" : "0";
+        checkAll = req.body.checkAll ? "1" : "0";
 
     Users.findOne({userId:userId},function(err,userDoc){
         if(err){

@@ -273,13 +273,13 @@
             },
             //全选商品
             toggleCheckCartAll(){
-                var flag = this.checkAllFlag; //根据实时计算得到true或false
+                var flag = !this.checkAllFlag; //根据实时计算得到true或false
                 this.cartList.forEach((item) =>{ //遍历商品并通过flag传递过来的参数进行赋值
-                    item.checked = flag ? "0":"1";
+                    item.checked = flag?"1":"0";
                 })
                 //调用商品全选与反选接口
                 axios.post("/users/editCheckAll",
-                  {'checkAll':flag}
+                  {checkAll:flag}
                   ).then((res)=>{
                       if(res.data.status == "0"){
                           console.log(res.data.result)
