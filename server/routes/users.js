@@ -86,7 +86,7 @@ router.get("/checkLogin",function(req,res,next){
 
 
 //我的购物车
-router.get("/cart",function(req,res,next){
+router.get("/cartList",function(req,res,next){
     //获取用户id
     var userId = req.cookies.userId;
     //根据用户查询当前用户的购物车
@@ -107,6 +107,79 @@ router.get("/cart",function(req,res,next){
             }
         }
 
+    })
+})
+
+//删除商品
+router.post("/delCart",function(req,res,next){
+    //获取用户id
+    var userId = req.cookies.userId,
+        //商品id
+        productId = req.body.productId; 
+    Users.update({
+        userId:userId
+    },{
+        $pull:{
+            'cartList':{
+                'productId':productId
+            }
+        }
+    },function(err,doc){
+        if(err){
+            res.json({
+                status:"1",
+                msg:err.message,
+                result:''
+            })
+
+        }else{
+            if(doc){
+                res.json({
+                    status:'0',
+                    msg:'成功',
+                    result:'success'
+                })
+            }
+        }
+    });
+});
+
+//修改商品（数量）
+router.post('/editCart',function(req,res,next){
+    //获取用户id
+    var userId = req.cookies.userId,
+        productId = req.body.productId,         //商品ID
+        productNum = req.body.productNum,       //商品数量
+        checked = req.body.checked;             //是否选中
+
+    console.log('------------------------------------------')
+    console.log('productId--:' + productId)
+    console.log('productNum--:' + productNum)
+    console.log('checked--:' + checked)
+    console.log('------------------------------------------')
+
+    Users.update({
+        'userId':userId,
+        'cartList.productId':productId,         //商品数量
+    },{
+        "cartList.$.productNum":productNum,
+        "cartList.$.checked":checked,
+    },function(err,doc){
+       if(err){
+           res.json({
+              status:'1',
+              msg:err.message,
+              result:''
+           })
+       }else{
+            if(doc){
+                res.json({
+                    status:'0',
+                    msg:'成功',
+                    result:'success'
+                })
+            }
+       }
     })
 })
 

@@ -62,7 +62,7 @@
               <li v-for = "item in cartList">
                 <div class="cart-tab-1">
                   <div class="cart-item-check">
-                    <a href="javascipt:;" class="checkbox-btn item-check-btn">
+                    <a href="javascipt:;" class="checkbox-btn item-check-btn" :class = "{'check':item.checked =='1'}" @click = "editCart('check',item)">
                       <svg class="icon icon-ok">
                         <use xlink:href="#icon-ok"></use>
                       </svg>
@@ -82,9 +82,9 @@
                   <div class="item-quantity">
                     <div class="select-self select-self-open">
                       <div class="select-self-area">
-                        <a class="input-sub">-</a>
+                        <a class="input-sub" @click = "editCart('reduce',item)">-</a>
                         <span class="select-ipt">{{item.productNum}}</span>
-                        <a class="input-add">+</a>
+                        <a class="input-add" @click = "editCart('add',item)">+</a>
                       </div>
                     </div>
                   </div>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="cart-tab-5">
                   <div class="cart-item-opration">
-                    <a href="javascript:;" class="item-edit-btn">
+                    <a href="javascript:;" class="item-edit-btn" @click = "del(item.productId)">
                       <svg class="icon icon-del">
                         <use xlink:href="#icon-del"></use>
                       </svg>
@@ -130,6 +130,13 @@
         </div>
       </div>
     </div>
+    <Modal :mdShow = "confirmModal" @close = "closeConfirmModal">
+          <p slot = "message">确定要删除吗</p>
+          <div slot = "btnGroup">
+              <a class="btn btn--m" @click = "confirmDel">确认</a>
+              <a class="btn btn--m" @click = "confirmModal = false">取消</a>
+          </div>
+    </Modal>
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -167,6 +174,8 @@
         data(){
             return{
                 cartList:[],          //购物车数据
+                confirmModal:false,         //确认删除模态
+                productId:'',               //商品id用于删除                 
             }
         },
         components:{
@@ -181,7 +190,7 @@
         methods:{
             //加载购物车数据
             cartInit(){
-                 axios.get("/users/cart").then((response)=>{
+                 axios.get("/users/cartList").then((response)=>{
                     if(response.data.status == "0"){
                         this.cartList = response.data.result;
                         console.log(this.cartList)
@@ -189,7 +198,61 @@
                       
                  })
 
-            }
+            },
+            
+            //删除
+            del(productId){
+              this.productId = productId;
+              this.confirmModal = true;
+
+            },
+            //确认删除
+            confirmDel(){
+                //调用接口根据商品id去删除
+                axios.post("/users/delCart",
+                  {productId:this.productId}
+                  ).then((res)=>{
+                      if(res.data.status == "0"){
+                          //关闭模态
+                           this.confirmModal = false;
+                          //alert(res.data.msg)
+                          //成功后重新调用购物车数据
+                          this.cartInit();
+                      }
+                  })
+            },
+            //编辑购物车
+            editCart(flag,item){
+                if(flag == 'reduce'){
+                    //数量小于等于0直接返回
+                    if(item.productNum <= 1){
+                        return;
+                    }
+                    //否则数量减减
+                    item.productNum --;
+                }else if(flag == 'add'){
+                    item.productNum ++;
+                }else{
+                    item.checked = item.checked == '1' ? '0':'1';  //是否选中商品 1：选中 0：取消
+                }
+
+                //调用修改商品接口
+                axios.post('/users/editCart',
+                  { productId:item.productId,      //商品id
+                    productNum:item.productNum,    //商品数量
+                    checked:item.checked,          //商品是否选中
+                  }
+                  ).then((res) =>{
+                      if(res.data.status == "0"){
+                         console.log(res.data.result)
+                      }
+                  })
+            },
+
+            //关闭模态
+            closeConfirmModal(){
+              this.confirmModal = false;
+            },
         }
     }
 </script>
