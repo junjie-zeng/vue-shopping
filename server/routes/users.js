@@ -221,4 +221,107 @@ router.post('/editCheckAll',function(req,res,next){
     })
 })
 
+//地址获取
+router.get("/addressList",function(req,res,next){
+    var userId = req.cookies.userId;
+    Users.findOne({userId:userId},function(err,doc){
+        if(err){
+            res.json({
+                status:"1",
+                msg:err.message,
+                result:''
+            })
+        }else{
+            res.json({
+                status:"0",
+                msg:'',
+                result:doc.addressList
+            })
+        }
+    })
+})
+
+//设置默认的地址
+router.post('/setDefault',function(req,res,next){
+    var userId = req.cookies.userId,
+        addressId = req.body.addressId;
+        console.log('------------------------------------------')
+        console.log('addressId--:' + addressId)
+        console.log('------------------------------------------')
+    if(!addressId){
+        res.json({
+            status:'1',
+            msg:"userId 为空",
+            result:''
+        })
+    }else{
+        Users.findOne({userId:userId},function(err,doc){
+            if(err){
+                res.json({
+                    status:'1',
+                    msg:err.message,
+                    result:''
+                })
+            }else{
+                var addressList = doc.addressList;
+                addressList.forEach((item)=>{
+                    if(item.addressId == addressId){
+                        item.isDefault = true;
+                    }else{
+                        item.isDefault = false;
+                    }
+                });
+                doc.save(function(err1,doc1){
+                    if(err1){
+                        res.json({
+                            status:'1',
+                            msg:err1.message,
+                            result:''
+                        })
+                    }else{
+                        res.json({
+                            status:'0',
+                            msg:'成功',
+                            result:''
+                        })
+                    }
+                })
+            }
+
+        })
+    }
+})
+
+//删除地址
+router.post("/delAddress",function(req,res,next){
+    var userId = req.cookies.userId,
+        addressId = req.body.addressId;
+    Users.update({
+        userId:userId
+    },{
+        $pull:{
+            'addressList':{
+                'addressId':addressId
+            }
+        }
+    },function(err,doc){
+        if(err){
+            res.json({
+                status:"1",
+                msg:err.message,
+                result:''
+            })
+
+        }else{
+            if(doc){
+                res.json({
+                    status:'0',
+                    msg:'成功',
+                    result:'success'
+                })
+            }
+        }
+    });
+})
+
 module.exports = router;

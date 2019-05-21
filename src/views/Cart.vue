@@ -123,7 +123,7 @@
               </div>
               <div class="btn-wrap">
                <!--  <router-link :to = "{name:'Address'}">Checkout</router-link> -->
-                <a class="btn btn--red" href="/#/address">Checkout</a>
+                <a class="btn btn--red" :class = "{'btn--dis':countCartCheck==0}" @click = "checkOut">Checkout</a> <!-- countCartCheck等于0的时候不能跳转页面 -->
               </div>
             </div>
           </div>
@@ -285,6 +285,15 @@
                           console.log(res.data.result)
                       }
                   })
+            },
+
+            //跳转页面
+            checkOut(){
+                if(this.countCartCheck > 0){   //当选中的商品大于0的时候才进行页面跳转
+                    this.$router.push({
+                      path:'/address'
+                    })
+                }
             },
 
             //关闭模态

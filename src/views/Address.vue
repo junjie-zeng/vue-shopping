@@ -60,38 +60,24 @@
             <div class="addr-list-wrap">
               <div class="addr-list">
                 <ul>
-                  <li>
+                  <li v-for = "(item,index) in addressListFilter" :class = "{'check':checkIndex == index}" @click = "checkIndex = index;selectedAddrId=item.addressId">
                     <dl>
-                      <dt>Jack</dt>
-                      <dd class="address">海淀区朝阳公园</dd>
-                      <dd class="tel">18610000000</dd>
+                      <dt>{{item.userName}}</dt>
+                      <dd class="address">{{item.streetName}}</dd>
+                      <dd class="tel">{{item.tel}}</dd>
                     </dl>
                     <div class="addr-opration addr-del">
-                      <a href="javascript:;" class="addr-del-btn">
+                      <a href="javascript:;" class="addr-del-btn" @click = "delAddressConfirm(item.addressId)">
                         <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
                       </a>
                     </div>
-                    <div class="addr-opration addr-set-default">
-                      <a href="javascript:;" class="addr-set-default-btn"><i>Set default</i></a>
-                    </div>
-                    <div class="addr-opration addr-default">Default address</div>
+                    <div class="addr-opration">
+                      <a href="javascript:;" class="addr-set-default-btn" v-if = "!item.isDefault" @click = "setDefault(item.addressId)"><i>Set default</i></a>
+                    </div> 
+                    
+                    <div class="addr-opration addr-default" v-if = "item.isDefault">Default address</div>
                   </li>
-                  <li>
-                    <dl>
-                      <dt>Tom</dt>
-                      <dd class="address">海淀区中关村</dd>
-                      <dd class="tel">18510000000</dd>
-                    </dl>
-                    <div class="addr-opration addr-del">
-                      <a href="javascript:;" class="addr-del-btn">
-                        <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
-                      </a>
-                    </div>
-                    <div class="addr-opration addr-set-default">
-                      <a href="javascript:;" class="addr-set-default-btn"><i>Set default</i></a>
-                    </div>
-                    <div class="addr-opration addr-default">Default address</div>
-                  </li>
+                  
                   <li class="addr-new">
                     <div class="add-new-inner">
                       <i class="icon-add">
@@ -104,7 +90,7 @@
               </div>
 
               <div class="shipping-addr-more">
-                <a class="addr-more-btn up-down-btn" href="javascript:;">
+                <a class="addr-more-btn up-down-btn" href="javascript:;" @click = "more">
                   more
                   <i class="i-up-down">
                     <i class="i-up-down-l"></i>
@@ -132,12 +118,20 @@
               </div>
             </div>
             <div class="next-btn-wrap">
-              <a class="btn btn--m btn--red" href="/#/orderConfirm">Next</a>
+              <!-- 参数传递 -->
+              <router-link class="btn btn--m btn--red" v-bind:to="{path:'orderConfirm',query:{'addressId':selectedAddrId}}">Next</router-link>
             </div>
           </div>
         </div>
       </div>
       <nav-footer></nav-footer>
+      <Modal :mdShow = "confirmModal" @close = "closeConfirmModal">
+           <p slot= "message">确定要删除吗</p>
+           <div slot = "btnGroup">
+               <a class="btn btn--m" @click = "delAddress">确认</a>
+               <a class="btn btn--m" @click = "confirmModal = false">取消</a>
+           </div>
+      </Modal>
     </div>
 </template>
 <style>
@@ -146,16 +140,86 @@
   import NavHeade from '@/components/NavHeade'
   import NavBread from '@/components/NavBread'
   import NavFooter from '@/components/NavFooter'
+  import axios from './../../node_modules/axios/dist/axios.js'
+  import Modal from '@/components/Modal'
   export default{
       data(){
           return{
+              addressList:[],           //地址数据
+              checkIndex:0,
+              confirmModal:false,       //模态
+              addressId:'',             //暂存地址id
+              limit:1,                  //默认显示两个
+              selectedAddrId:'',        //当前选择的id
 
           }
       },
       components:{
         NavHeade,
         NavBread,
-        NavFooter
+        NavFooter,
+        Modal
+      },
+      computed:{  //实时计算
+          addressListFilter(){
+             return this.addressList.slice(0,this.limit);
+          }
+      },
+      mounted(){
+          this.addressInit();   //数据初始化
+      },
+      methods:{
+          //地址获取
+          addressInit(){
+              axios.get('/users/addressList').then((res)=>{
+                  if(res.data.status == "0"){
+                      this.addressList = res.data.result;
+                  }
+              })
+          },
+          //查看更多
+          more(){
+              if(this.limit == 1){   //默认值显示一条
+                  this.limit = this.addressList.limit;
+              }else{
+                  this.limit = 1;
+              }
+          },
+          //设置默认地址
+          setDefault(addressId){
+              axios.post("/users/setDefault",
+                {
+                  addressId:addressId
+                }).then((res)=>{
+                    if(res.data.status == "0"){
+                        alert("设置成功");
+                        this.addressInit();
+                    }
+                })
+ 
+          },
+          //删除弹窗
+          delAddressConfirm(addressId){
+              this.confirmModal = true;
+              this.addressId = addressId;
+          },
+          //确定删除地址
+          delAddress(){
+              axios.post("/users/delAddress",
+                {addressId:this.addressId}
+                ).then((res)=>{
+                    if(res.data.status == "0"){
+                        alert("删除成功")
+                        this.confirmModal = false;
+                        this.addressInit();
+                    }
+                })
+
+          },
+          //关闭模态
+          closeConfirmModal(){
+              this.confirmModal = false;
+          }
       }
   }
 </script>
