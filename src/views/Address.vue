@@ -146,7 +146,7 @@
       data(){
           return{
               addressList:[],           //地址数据
-              checkIndex:0,
+              checkIndex:0,             //用于点击选择地址
               confirmModal:false,       //模态
               addressId:'',             //暂存地址id
               limit:1,                  //默认显示两个
@@ -174,6 +174,7 @@
               axios.get('/users/addressList').then((res)=>{
                   if(res.data.status == "0"){
                       this.addressList = res.data.result;
+                      this.selectedAddrId = this.addressList[0].addressId; //设置当前选择的地址id，默认为第一个
                   }
               })
           },
