@@ -174,7 +174,7 @@
               axios.get('/users/addressList').then((res)=>{
                   if(res.data.status == "0"){
                       this.addressList = res.data.result;
-                      this.selectedAddrId = this.addressList[0].addressId; //设置当前选择的地址id，默认为第一个
+                      //this.selectedAddrId = this.addressList[0].addressId; //设置当前选择的地址id，默认为第一个
                   }
               })
           },

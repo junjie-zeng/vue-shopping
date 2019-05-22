@@ -53,31 +53,31 @@
               </ul>
             </div>
             <ul class="cart-item-list">
-              <li>
+              <li v-for = "item in orderCartList" v-if = "item.checked == '1'">
                 <div class="cart-tab-1">
                   <div class="cart-item-pic">
-                    <img src="/static/1.jpg" alt="XX">
+                   <!--  <img :src="/static/+item.prodcutImg" :alt="item.productName"> -->
                   </div>
                   <div class="cart-item-title">
-                    <div class="item-name">XX</div>
+                    <div class="item-name">{{item.productName}}</div>
 
                   </div>
                 </div>
                 <div class="cart-tab-2">
-                  <div class="item-price">199</div>
+                  <div class="item-price">{{item.prodcutPrice | currency('￥')}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="item-quantity">
                     <div class="select-self">
                       <div class="select-self-area">
-                        <span class="select-ipt">×5</span>
+                        <span class="select-ipt">{{item.productNum}}</span>
                       </div>
                     </div>
                     <div class="item-stock item-stock-no">In Stock</div>
                   </div>
                 </div>
                 <div class="cart-tab-4">
-                  <div class="item-price-total">5000</div>
+                  <div class="item-price-total">{{(item.productNum * item.prodcutPrice) | currency('￥')}}</div>
                 </div>
               </li>
             </ul>
@@ -90,23 +90,23 @@
             <ul>
               <li>
                 <span>Item subtotal:</span>
-                <span>5000</span>
+                <span>{{ItemSubtotal | currency('￥')}}</span>
               </li>
               <li>
                 <span>Shipping:</span>
-                <span>30</span>
+                <span>{{Shipping | currency('￥')}}</span>
               </li>
               <li>
                 <span>Discount:</span>
-                <span>100</span>
+                <span>{{Discount | currency('￥')}}</span>
               </li>
               <li>
                 <span>Tax:</span>
-                <span>300</span>
+                <span>{{Tax | currency('￥')}}</span>
               </li>
               <li class="order-total-price">
                 <span>Order total:</span>
-                <span>5230</span>
+                <span>{{OrderTotal | currency('￥')}}</span>
               </li>
             </ul>
           </div>
@@ -129,16 +129,51 @@
   import NavHeade from '@/components/NavHeade'
   import NavBread from '@/components/NavBread'
   import NavFooter from '@/components/NavFooter'
+  import axios from './../../node_modules/axios/dist/axios.js'
+  import {currency} from './../util/currency'
   export default{
       data(){
           return{
+            orderCartList:[],          //确认订单数据
+            Shipping:30,               //运费
+            Discount:100,              //折扣
+            Tax:30,                    //税收
+            ItemSubtotal:0,           //小计
+            OrderTotal:0,             //订单总价
 
           }
+      },
+      filters:{
+          currency:currency,          //价格过滤
       },
       components:{
         NavHeade,
         NavBread,
         NavFooter
+      },
+      mounted(){
+          this.orderInit();
+      },
+      methods:{
+          orderInit(){
+            axios.get('/users/cartList').then((res) =>{   //调用我的购物车中的数据，通过v-if 判断check为1的数据
+                if(res.data.status == "0"){
+                    var resList = res.data.result;
+                    this.orderCartList = resList;
+                    //console.log(this.orderCartList)
+                    
+                    this.orderCartList.forEach((item)=>{
+                      if(item.checked == "1"){
+                       //小计 = 数量 * 单价
+                       this.ItemSubtotal += parseInt(item.productNum) * parseInt(item.prodcutPrice); //小计
+                      }
+                    })
+                    
+                    //总价 = 小计 + 运费 - 折扣 +优惠
+                    this.OrderTotal = this.ItemSubtotal + this.Shipping - this.Discount + this.Tax;
+                }
+            })
+          }
       }
   }
 </script>
