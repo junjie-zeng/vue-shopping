@@ -1,7 +1,9 @@
 <template>
   <div>
     <nav-heade></nav-heade>
-    <nav-bread></nav-bread>
+    <nav-bread>
+        <span>order</span>
+    </nav-bread>
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <defs>
         <symbol id="icon-add" viewBox="0 0 32 32">
@@ -106,7 +108,7 @@
               </li>
               <li class="order-total-price">
                 <span>Order total:</span>
-                <span>{{OrderTotal | currency('￥')}}</span>
+                <span>{{orderTotal | currency('￥')}}</span>
               </li>
             </ul>
           </div>
@@ -117,7 +119,7 @@
             <a class="btn btn--m" href="/#/address">Previous</a>
           </div>
           <div class="next-btn-wrap">
-            <button class="btn btn--m btn--red"><a href="/#/orderSuccess" >Proceed to payment</a></button>
+            <button class="btn btn--m btn--red" @click = "payMent">Proceed to payment</button>
           </div>
         </div>
       </div>
@@ -139,7 +141,7 @@
             Discount:100,              //折扣
             Tax:30,                    //税收
             ItemSubtotal:0,           //小计
-            OrderTotal:0,             //订单总价
+            orderTotal:0,             //订单总价
 
           }
       },
@@ -155,6 +157,7 @@
           this.orderInit();
       },
       methods:{
+          //订单数据初始化
           orderInit(){
             axios.get('/users/cartList').then((res) =>{   //调用我的购物车中的数据，通过v-if 判断check为1的数据
                 if(res.data.status == "0"){
@@ -170,9 +173,23 @@
                     })
                     
                     //总价 = 小计 + 运费 - 折扣 +优惠
-                    this.OrderTotal = this.ItemSubtotal + this.Shipping - this.Discount + this.Tax;
+                    this.orderTotal = this.ItemSubtotal + this.Shipping - this.Discount + this.Tax;
                 }
             })
+          },
+          //支付生成订单
+          payMent(){
+              var addressId = this.$route.query.addressId;
+              console.log('addressId--:',addressId)
+              axios.post('users/payMent',
+                {addressId:addressId,orderTotal:this.orderTotal}
+                ).then((res)=>{
+                    if(res.data.status == '0'){ //如果成功则跳转到订单生成页面
+                        this.$router.push({
+                            path:'/orderSuccess?orderId' + res.data.result.orderId,
+                        })
+                    }
+                })
           }
       }
   }

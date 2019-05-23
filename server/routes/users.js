@@ -1,5 +1,8 @@
 var express = require('express');
 var router = express.Router();
+
+//引用日期工具类
+require('./../util/util')
 //用户模型
 var Users = require('./../models/users')
 
@@ -322,6 +325,84 @@ router.post("/delAddress",function(req,res,next){
             }
         }
     });
+})
+
+//订单支付
+router.post('/payMent',function(req,res,next){
+    var userId = req.cookies.userId,     //用户id
+        addressId = req.body.addressId,  //地址id
+        orderTotal = req.body.orderTotal; //总金额
+    Users.findOne({userId:userId},function(err,doc){  //根据用户id查询数据
+        if(err){
+            res.json({
+                status:'1',
+                msg:err.message,
+                result:''
+            })
+        }else{
+            var address = '',
+                goodsList = [];
+            //获取当前用户地址信息
+            doc.addressList.forEach((item) =>{
+                if(addressId == item.addressId){   
+                    address = item;
+                }
+            })
+            //获取当前用户商品信息
+            doc.cartList.forEach((item)=>{
+                if(item.checked == "1"){
+                    goodsList.push(item);
+                }
+            })
+
+            //生成订单标识
+            var platform = 'zjj';
+            var d1 = Math.floor(Math.random()*10);
+            var d2 = Math.floor(Math.random()*10);
+            var sysDate = new Date().Format('yyyyMMddhhmmss');//系统时间
+            var createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');//当前时间
+            var orderId = platform + d1 + sysDate + d2; //订单id
+
+            var order = {
+                orderId:orderId,       //订单id
+                orderTotal:orderTotal,  //总金额
+                addressInfo:address,    //地址信息
+                goodsList:goodsList,   //商品信息
+                orderStatus:'1',       //状态
+                createDate:createDate  //当前时间
+            }
+
+          /*  console.log('------------------------------------------')
+            console.log('orderId--:' + order.orderId)
+            console.log('orderTotal--:' + order.orderTotal)
+            console.log('addressInfo--:' + order.addressInfo)
+            console.log('createDate--:' + order.createDate)
+            console.log('------------------------------------------')  */          
+
+            doc.orderList.push(order);  //将对象放入订单数组中
+
+            doc.save(function(err1,doc1){ //更新
+                if(err1){
+                    res.json({
+                        status:'1',
+                        msg:err1.message,
+                        result:''
+                    })
+                }else{
+                    res.json({
+                        status:'0',
+                        msg:'',
+                        result:{ //返回订单id与总金额
+                            orderId:order.orderId,
+                            orderTotal:order.orderTotal
+                        }                        
+                    })
+                }
+            })
+
+
+        }
+    })
 })
 
 module.exports = router;
