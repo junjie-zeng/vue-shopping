@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>vuex-state</title>
+	<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+	<script src="https://cdn.bootcss.com/vuex/3.1.0/vuex.min.js"></script>
+</head>
+<body>
+	<div id = 'app'>
+		<h1>{{msg}}</h1>
+		<a href="javaScript:" @click="countAdd">点击</a>
+		<counter></counter>
+	</div>
+	<script>
+        //组件
+		const Counter = {
+			template:`
+				<div>
+					<div>{{count}}</div>
+					<div>{{getCount}}</div>
+
+				</div>
+			`,
+			computed:{
+				count(){
+					return this.$store.state.count
+				},
+				getCount(){
+					return this.$store.getters.getCount
+				}
+			}
+		}
+        //vuex
+        const store = new Vuex.Store({
+        	state:{
+        		count:0,
+        	},
+        	getters:{
+                getCount(state){
+                	return  "Hello " + state.count 
+                }
+        	},
+        	mutations:{
+        		countMutations(state,num){
+                    state.count = num ;       //state.count ++
+        		}
+        	},
+        	actions:{
+        		countAction(context,num){
+        			context.commit('countMutations',num)
+        		}
+        	}
+        })
+
+		new Vue({
+			el:'#app',
+			store,
+			components:{
+				Counter,
+			},
+			data:{
+				msg:'vuex使用'
+			},
+			methods:{
+				countAdd(){
+					this.$store.dispatch('countAction',1000);
+				}
+			}
+		})
+	</script>
+</body>
+</html>
