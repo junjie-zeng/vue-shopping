@@ -186,7 +186,7 @@
                 ).then((res)=>{
                     if(res.data.status == '0'){ //如果成功则跳转到订单生成页面
                         this.$router.push({
-                            path:'/orderSuccess?orderId' + res.data.result.orderId,
+                            path:'/orderSuccess?orderId=' + res.data.result.orderId,
                         })
                     }
                 })

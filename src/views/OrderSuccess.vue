@@ -17,12 +17,12 @@
         </div>
 
         <div class="order-create">
-          <div class="order-create-pic"><img src="/static/ok-2.png" alt=""></div>
+          <div class="order-create-pic"><img src="/static/ok.png" alt=""></div>
           <div class="order-create-main">
             <h3>Congratulations! <br>Your order is under processing!</h3>
             <p>
-              <span>Order ID：62000000000</span>
-              <span>Order total：5230</span>
+              <span>Order ID：{{orderId}}</span>
+              <span>Order total：{{orderTotal | currency('￥')}}</span>
             </p>
             <div class="order-create-btn-wrap">
               <div class="btn-l-wrap">
@@ -40,16 +40,31 @@
 </template>
 <script>
     import NavHeade from '@/components/NavHeade'
-    import NavFooter from '@/components/NavFooter'  
+    import NavFooter from '@/components/NavFooter' 
+    import axios from './../../node_modules/axios/dist/axios.js'
     export default{
         data(){
             return{
-
+              orderId:'',     //订单id
+              orderTotal:0,   //订单总价
             }
         },
         components:{
           NavHeade,
           NavFooter
-      }
+        },
+        mounted(){
+            //获取订单id与总价
+            var orderId = this.$route.query.orderId;
+            console.log('orderId-:' + orderId)
+            //获取订单明细（订单id与总金额）
+            axios.get('/users/orderDetailed',{params:{orderId:orderId}}).then((res)=>{
+              if(res.data.status == "0"){
+                  this.orderId = res.data.result.orderId;
+                  this.orderTotal = res.data.result.orderTotal;
+              }
+
+            })
+        }
     }
 </script>

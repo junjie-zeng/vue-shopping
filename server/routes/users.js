@@ -405,4 +405,56 @@ router.post('/payMent',function(req,res,next){
     })
 })
 
+//订单明细 获取订单id与总价
+router.get('/orderDetailed',function(req,res,next){
+    var userId = req.cookies.userId,
+        orderId  = req.param('orderId');
+    //根据用户id进行查询
+    Users.findOne({userId:userId},function(err,doc){
+        if(err){
+            res.json({
+                status:'1',
+                msg:err.message,
+                result:''
+            })
+        }else{
+            var orderList = doc.orderList; //订单List
+            if(orderList.length > 0){     //当有订单的时候，将订单总价保存起来
+                var orderTotal = 0;
+                orderList.forEach((item)=>{   //遍历订单List，根据订单id去找当前的订单，保存订单总价
+                    if(orderId == item.orderId){
+                        orderTotal = item.orderTotal;
+                    }
+                })
+
+                //如果订单z总金额大于0 则返回，否则为无效订单
+                if(orderTotal > 0){
+                    res.json({
+                        status:'0',
+                        msg:'',
+                        result:{
+                            orderId:orderId,            //订单id
+                            orderTotal:orderTotal       //订单总金额
+                        }
+                    })
+                }else{
+                    res.json({
+                        status:'1',
+                        msg:'无效订单',
+                        result:''
+                    })
+                }
+
+            }else{
+                res.json({
+                    status:'1',
+                    msg:'当前用户未创建订单',
+                    result:''
+                })
+            }
+        }
+    })
+
+})
+
 module.exports = router;
