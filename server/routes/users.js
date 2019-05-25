@@ -113,6 +113,37 @@ router.get("/cartList",function(req,res,next){
     })
 })
 
+//获取购物车数量
+router.get('/getShoppingCartCount',function(req,res,next){
+    if(req.cookies && req.cookies.userId){
+         var userId = req.cookies.userId;
+         Users.findOne({userId:userId},function(err,doc){
+            if(err){
+                res.json({
+                    status:'1',
+                    msg:err.message,
+                    result:''
+                })
+            }else{
+                //获取购物车
+                var cartList = doc.cartList;  
+                //定义商品数量
+                var cartNum = 0;
+                //遍历购物车，并累加商品数量
+                cartList.map((item)=>{
+                    cartNum += parseInt(item.productNum);
+                })
+                //返回商品数量
+                res.json({
+                    status:'0',
+                    msg:'',
+                    result:cartNum
+                })
+            }
+         })
+    }
+})
+
 //删除商品
 router.post("/delCart",function(req,res,next){
     //获取用户id

@@ -94,7 +94,7 @@
                 </div>
                 <div class="cart-tab-5">
                   <div class="cart-item-opration">
-                    <a href="javascript:;" class="item-edit-btn" @click = "del(item.productId)">
+                    <a href="javascript:;" class="item-edit-btn" @click = "del(item)">
                       <svg class="icon icon-del">
                         <use xlink:href="#icon-del"></use>
                       </svg>
@@ -175,7 +175,7 @@
             return{
                 cartList:[],          //购物车数据
                 confirmModal:false,         //确认删除模态
-                productId:'',               //商品id用于删除                 
+                delItme:'',               //商品id用于删除                 
             }
         },
         components:{
@@ -224,8 +224,8 @@
             },
             
             //删除
-            del(productId){
-              this.productId = productId;
+            del(delItme){
+              this.delItme = delItme;
               this.confirmModal = true;
 
             },
@@ -233,7 +233,7 @@
             confirmDel(){
                 //调用接口根据商品id去删除
                 axios.post("/users/delCart",
-                  {productId:this.productId}
+                  {productId:this.delItme.productId}
                   ).then((res)=>{
                       if(res.data.status == "0"){
                           //关闭模态
@@ -241,6 +241,8 @@
                           //alert(res.data.msg)
                           //成功后重新调用购物车数据
                           this.cartInit();
+                          //将删除的数量给vuex来管理
+                          this.$store.commit('updateShoppingCartCount',-parseInt(this.delItme.productNum));
                       }
                   })
             },
@@ -267,7 +269,17 @@
                   }
                   ).then((res) =>{
                       if(res.data.status == "0"){
-                         console.log(res.data.result)
+                         //console.log(res.data.result)
+                     
+                         var num = 0;
+                         if(flag == 'reduce'){
+                             num = -1;
+                         }else if(flag == 'add'){
+                             num = 1;
+                         }
+                         //通过vuex来管理购物车数量的状态
+                         this.$store.commit('updateShoppingCartCount',num);
+
                       }
                   })
             },

@@ -108,6 +108,13 @@ vue购物车2
     5.23
        订单生成 
        增加接口payMent
+
+    5.25
+       1.vuex的使用 在main中引入Vuex,通过new store 实例定义vuex.
+       2.vuex管理购物车数量与用户信息
+           更新用户信息 updateCurrentUser
+           更新数量 updateShoppingCartCount
+           初始化数量 initShoppingCartCount
         
 
 

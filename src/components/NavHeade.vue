@@ -19,7 +19,7 @@
               <a href="javascript:void(0)" class="navbar-link" @click = "loginModal = true" v-if = "!nickName">Login</a> <!-- 等于''的时候显示 -->
               <a href="javascript:void(0)" class="navbar-link" @click = "logOut" v-if = "nickName">Logout</a> <!-- 不等于''的时候显示 -->
               <div class="navbar-cart-container">
-                <span class="navbar-cart-count"></span>
+                <span class="navbar-cart-count">{{shoppingCartCount}}</span>
                 <a class="navbar-link navbar-cart-link" href="/#/cart">
                   <svg class="navbar-cart-logo">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -67,6 +67,7 @@
 <script>
     import axios from 'axios';
     //import axios from './../../node_modules/axios/dist/axios.js'
+    import {mapState} from 'vuex'
     export default{
         data(){
           return{
@@ -74,13 +75,28 @@
               userPwd:'123456',
               errMsg:false,   //错误提示
               loginModal:false, //登入窗口
-              nickName:'',     //当前用户
+              //nickName:'',     //当前用户
 
           }
         },
         //初始化函数
         mounted(){
             this.checkLogin();
+            
+        },
+
+        //实时计算
+        computed:{
+           ...mapState(['nickName','shoppingCartCount']) //本方法与于以下方法相同
+           /* //通过vuex拿到当前用户
+            nickName(){
+                return this.$store.state.nickName;
+            },
+
+            //通过vuex管理购物车数量
+            shoppingCartCount(){
+                return this.$store.state.shoppingCartCount;
+            }*/
         },
         methods:{
             //调用判断是否已经登入接口，查找cookie中是否有userId，如果有userId则返回userName
@@ -88,8 +104,12 @@
                 axios.get("/users/checkLogin").then((response) =>{
                     var res = response.data;
                     if(res.status == "0"){
-                        this.nickName = res.result;
-                        console.log('this.nickName' + this.nickName)
+                        //this.nickName = res.result;
+                        //console.log('this.nickName' + this.nickName)
+                        //查看用户是否登入，通过接口返回过来的信息传递给vuex，通过vuex进行页面渲染
+                        this.$store.commit('updateCurrentUser',res.result)
+                        //调用购物车数量
+                        this.getShoppingCartCount()
                     }
                 })
             }, 
@@ -107,8 +127,10 @@
                      var res = reponse.data;
                     if(res.status == "0"){
                         this.loginModal = false;
-                        this.nickName = res.result.userName
-                        console.log('userName：' + res.result.userName)
+                       // this.nickName = res.result.userName
+                       //登入成功通过传递参数给vuex,通过vuex渲染当用户
+                        this.$store.commit('updateCurrentUser',res.result.userName);
+                        //console.log('userName：' + res.result.userName)
                     }else{
                         this.errMsg = true;
                     }
@@ -119,7 +141,19 @@
                 axios.post("/users/logout").then((response)=>{
                     let res = response.data;
                     if(res.status == "0"){
-                       this.nickName = "";
+                       //this.nickName = "";
+                       //登出时将空传给vuex,通过vuex来改变登入状态
+                       this.$store.commit('updateCurrentUser','')
+                    }
+                })
+            },
+            //获取商品数量
+            getShoppingCartCount(){
+                axios.get('/users/getShoppingCartCount').then((res)=>{
+                    if(res.data.status == "0"){
+                        console.log(res.data.result)
+                        //根据接口返回过来的数量，传递给vuex，通过vuex初始化购物车数量来渲染购物车数量（以防止累加）
+                        this.$store.commit('initShoppingCartCount',res.data.result);
                     }
                 })
             }

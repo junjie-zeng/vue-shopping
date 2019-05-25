@@ -33,7 +33,7 @@
 
                   <li v-for = 'item in goodList'>
                     <div class="pic">
-                       <!--  <a href="#"><img v-lazy="'/static/' + item.prodcutImg" alt=""></a>  -->
+                        <a href="#"><img v-lazy="'/static/' + item.prodcutImg" alt=""></a> 
                     </div>
                     <div class="main">
                       <div class="name">{{item.productName}}</div>
@@ -181,13 +181,16 @@
                 this.getGoodList(true)          //调用获取商品函数
               },500)
           },
-          addCart(productId){                   //加入购物车，传入商品id
+          //加入购物车，传入商品id
+          addCart(productId){                   
             axios.post("/goods/addCart",{
               productId:productId
             }).then((res)=>{
               if(res.data.status == "0"){       //状态等于0说明调用接口成功
                  //alert(res.data.result)
                  this.mdShowCart = true;
+                 //加入购物车通过vuex管理数量，进行页面渲染
+                 this.$store.commit('updateShoppingCartCount',1);
               }else{
                 // alert("msg:" + res.data.msg)
                  this.mdShow = true;
