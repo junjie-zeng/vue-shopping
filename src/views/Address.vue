@@ -79,7 +79,7 @@
                   </li>
                   
                   <li class="addr-new">
-                    <div class="add-new-inner">
+                    <div class="add-new-inner" @click = "addAddressModel">
                       <i class="icon-add">
                         <svg class="icon icon-add"><use xlink:href="#icon-add"></use></svg>
                       </i>
@@ -132,6 +132,26 @@
                <a class="btn btn--m" @click = "confirmModal = false">取消</a>
            </div>
       </Modal>
+      <Modal :mdShow = "confirmModal2" @close = "closeConfirmModal">
+           <p slot= "message">地址至少需要一条数据,删除失败</p>
+           <div slot = "btnGroup">
+               <a class="btn btn--m" @click = "confirmModal2 = false">确认</a>
+           </div>
+      </Modal>
+      <!-- 增加地址 -->
+      <Modal :mdShow = "addressModal" @close = "closeConfirmModal">
+           <div slot= "message">
+               姓名：<input type="text" v-model="addressForm.userName"><br>
+               地址：<input type="text" v-model="addressForm.streetName"><br>
+               邮编：<input type="text" v-model="addressForm.postCode"><br>
+               电话：<input type="text" v-model="addressForm.tel"><br>
+               是否默认地址：<input type="radio" v-model="addressForm.isDefault" value="true" name="defaultAddress" >是
+                           <input type="radio"  v-model="addressForm.isDefault" value="false" name="defaultAddress">否  
+           </div>
+           <div slot = "btnGroup">
+               <a class="btn btn--m" @click = "okAddress">确认</a>
+           </div>
+      </Modal>
     </div>
 </template>
 <style>
@@ -148,9 +168,20 @@
               addressList:[],           //地址数据
               checkIndex:0,             //用于点击选择地址
               confirmModal:false,       //模态
+              confirmModal2:false,      //地址至少保留一条数据模态框
               addressId:'',             //暂存地址id
               limit:1,                  //默认显示两个
               selectedAddrId:'',        //当前选择的id
+              addressModal:false,        //添加地址
+              addressForm:{
+                addressId:0,
+                userName:'',
+                streetName:'',
+                postCode:'',
+                tel:'',
+                isDefault:false
+              }
+
 
           }
       },
@@ -201,8 +232,13 @@
           },
           //删除弹窗
           delAddressConfirm(addressId){
-              this.confirmModal = true;
-              this.addressId = addressId;
+              if(this.addressList.length>1){
+                  this.confirmModal = true;
+                  this.addressId = addressId;
+              }else{
+                  this.confirmModal2 = true;   //地址数量至少保留一条数据模态框
+              }
+              
           },
           //确定删除地址
           delAddress(){
@@ -217,9 +253,35 @@
                 })
 
           },
+          addAddressModel(){
+            this.addressModal = true;
+          },
+          //添加地址
+          okAddress(){
+              this.addressForm.addressId = parseInt(this.addressList[this.addressList.length-1].addressId)+1;
+              var param = {
+                addressId:this.addressForm.addressId,
+                userName:this.addressForm.userName,
+                streetName:this.addressForm.streetName,
+                postCode:this.addressForm.postCode,
+                tel:this.addressForm.tel,
+                isDefault:this.addressForm.isDefault,
+              };
+
+              axios.post("/users/addAddress",param).then((res)=>{
+                this.addressModal = false;
+                alert(res.data.msg)
+                this.addressInit();
+              })
+
+              console.log(param)
+
+          },
           //关闭模态
           closeConfirmModal(){
               this.confirmModal = false;
+              this.confirmModal2 = false;//地址至少保留一条数据模态框
+              this.addressModal = false;
           }
       }
   }

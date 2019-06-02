@@ -126,11 +126,12 @@
                 }).then((reponse) =>{
                      var res = reponse.data;
                     if(res.status == "0"){
-                        this.loginModal = false;
+                        this.loginModal = false;            ///登入框
                        // this.nickName = res.result.userName
                        //登入成功通过传递参数给vuex,通过vuex渲染当用户
                         this.$store.commit('updateCurrentUser',res.result.userName);
                         //console.log('userName：' + res.result.userName)
+                        this.getShoppingCartCount();
                     }else{
                         this.errMsg = true;
                     }

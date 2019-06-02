@@ -98,7 +98,7 @@ router.post("/addCart",function(req,res,next){
                   msg:err.message
                })
           }else{
-            console.log("userDoc" + userDoc);
+            //console.log("userDoc" + userDoc);
             if(userDoc){
                   let goodsItem = '';                     //用于保存商品信息
                   //判断商品是否已经添加到购物车了，如果商品id相同说明已有该商品，则让商品数量加加
@@ -135,9 +135,25 @@ router.post("/addCart",function(req,res,next){
                                  })
                               }else{
                                  if(doc2){
-                                     doc2.productNum = 1;
+                                    //***********************************************
+                                    //方法一
+                                     /*doc2.productNum = 1;
                                      doc2.checked = 1;
-                                     userDoc.cartList.push(doc2);                  //将doc2返回过来的那一条数据添加至购物车
+                                     userDoc.cartList.push(doc2); */                 //将doc2返回过来的那一条数据添加至购物车
+
+                                     //方法二 不在model中添加模型
+                                     userDoc.cartList.push({
+                                        productId:doc2.productId,
+                                        productName:doc2.productName,
+                                        prodcutPrice:doc2.prodcutPrice,
+                                        prodcutImg:doc2.prodcutImg,
+                                        productNum:1,
+                                        checked:1,
+
+                                     })
+                                     console.log("productName---" + doc2.productName);
+                                     console.log("doc2---" + doc2);
+                                    //***********************************************
                                     // console.log("---------------------------------------");
                                     // console.log("doc2" + doc2);
                                     // console.log("---------------------------------------");

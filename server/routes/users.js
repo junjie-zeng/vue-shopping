@@ -24,7 +24,8 @@ router.post('/login',function(req,res,next){
         if(err){
             res.json({
             	status:"1",
-            	msg:err.message
+            	msg:err.message,
+                result:''
             })
         }else{
         	if(doc){
@@ -46,7 +47,13 @@ router.post('/login',function(req,res,next){
         			}
         		})
 
-        	}
+        	}else{
+                res.json({
+                    status:"1",
+                    msg:'用户名或密码错误',
+                    result:''
+                })
+            }
 
         }
 	})
@@ -324,6 +331,68 @@ router.post('/setDefault',function(req,res,next){
 
         })
     }
+})
+
+//添加地址
+router.post("/addAddress",function(req,res,next){
+    var userId = req.cookies.userId,
+        addressId = req.body.addressId,
+        userName = req.body.userName,
+        streetName = req.body.streetName,
+        postCode = req.body.postCode,
+        tel = req.body.tel,
+        isDefault = req.body.isDefault;
+
+        console.log('------------------------------------------')
+        console.log('isDefault--:' + isDefault)
+        console.log('------------------------------------------')
+        Users.findOne({userId:userId},function(err,doc){
+            if(err){
+                res.json({
+                    status:'1',
+                    msg:err.message,
+                    result:''
+                })
+            }else{
+                doc.addressList.push({ //添加地址
+                    addressId:addressId,
+                    userName:userName,
+                    streetName:streetName,
+                    postCode:postCode,
+                    tel:tel,
+                    isDefault:isDefault
+                });
+
+                if(isDefault){ //在添加地址之后如果确定了地址为默认地址，则重新遍历list将当前地址设为默认
+                    doc.addressList.forEach((item)=>{
+                        if(item.addressId == addressId){
+                            item.isDefault = true;
+                        }else{
+                            item.isDefault = false;
+                        }
+                    })
+                }
+
+                doc.save(function(err1,doc1){//更新
+                    if(err1){
+                        res.json({
+                            status:'1',
+                            msg:err.message,
+                            result:''
+                        })
+                    }else{
+                        res.json({
+                            status:'0',
+                            msg:'添加成功',
+                            result:''
+                        })
+                    }
+                }) 
+            }
+
+        })
+
+
 })
 
 //删除地址
